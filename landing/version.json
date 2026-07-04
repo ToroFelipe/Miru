@@ -1,7 +1,7 @@
 {
-  "versionName": "1.0.4",
-  "versionCode": 5,
-  "date": "2026-07-03",
+  "versionName": "1.0.5",
+  "versionCode": 6,
+  "date": "2026-07-04",
   "apkUrl": "https://github.com/ToroFelipe/Miru/releases/latest/download/Miru-universal.apk",
-  "changelog": "Rebranding completo a Miru: tema teal sobre carbon, logo e icono nuevos, repositorio limpio."
+  "changelog": "Version 1.0.5 de Miru."
 }
