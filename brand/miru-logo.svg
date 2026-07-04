@@ -1,0 +1,15 @@
+<svg width="680" height="300" viewBox="0 0 680 300" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Miru</title>
+  <desc>Isotipo de ojo con boton de play como pupila junto al wordmark Miru</desc>
+  <rect x="16" y="16" width="648" height="268" rx="32" fill="none" stroke="#35D0D0" stroke-width="6" opacity="0.22"/>
+  <rect x="20" y="20" width="640" height="260" rx="28" fill="#0E1113" stroke="#35D0D0" stroke-width="2"/>
+  <g fill="none" stroke="#35D0D0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 150 Q150 92 230 150"/>
+    <path d="M70 150 Q150 208 230 150"/>
+  </g>
+  <path d="M132 124 L132 176 L182 150 Z" fill="#35D0D0"/>
+  <text x="300" y="188" font-family="Arial, Helvetica, sans-serif" font-size="130" font-weight="800" letter-spacing="-4">
+    <tspan fill="#35D0D0">M</tspan><tspan fill="#FFFFFF">iru</tspan>
+  </text>
+  <text x="303" y="228" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="500" letter-spacing="6" fill="#8A9BA0">ANIME · MANGA</text>
+</svg>

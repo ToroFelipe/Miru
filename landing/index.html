@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Miru — Anime & Manga</title>
+<meta name="description" content="Miru: anime y manga en una sola app. Descarga el APK y mira o lee desde tus fuentes favoritas." />
+<meta property="og:title" content="Miru — Anime & Manga" />
+<meta property="og:description" content="Anime y manga en una sola app Android." />
+<meta property="og:image" content="./assets/miru-icon.png" />
+<link rel="icon" href="./assets/miru-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --teal: #35D0D0;
+    --teal-dim: #1f9c9c;
+    --bg: #0E1113;
+    --surface: #14181A;
+    --text: #F2F5F6;
+    --muted: #8A9BA0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Poppins', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    position: relative;
+  }
+  /* teal glow, like the brand reference */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(1100px 700px at 78% 42%, rgba(53,208,208,0.18), transparent 60%),
+      radial-gradient(800px 500px at 10% 90%, rgba(53,208,208,0.08), transparent 55%);
+    pointer-events: none;
+  }
+  .wrap {
+    position: relative;
+    height: 100dvh;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    gap: clamp(20px, 4vw, 64px);
+    padding: clamp(24px, 5vw, 80px);
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  /* ---- left column ---- */
+  .logo { height: clamp(56px, 8vw, 96px); width: auto; display: block; }
+  .tagline {
+    margin-top: clamp(18px, 3vh, 34px);
+    font-size: clamp(28px, 4.4vw, 56px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.5px;
+  }
+  .tagline b { color: var(--teal); font-weight: 700; }
+  .sub {
+    margin-top: 16px;
+    font-size: clamp(15px, 1.5vw, 19px);
+    color: var(--muted);
+    max-width: 46ch;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .cta {
+    margin-top: clamp(22px, 4vh, 40px);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--teal); color: #04201f;
+    font-weight: 700; font-size: 17px;
+    padding: 15px 28px; border-radius: 14px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    box-shadow: 0 10px 30px rgba(53,208,208,0.28);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(53,208,208,0.4); }
+  .btn svg { width: 20px; height: 20px; }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    border: 1.5px solid rgba(255,255,255,0.16);
+    box-shadow: none; font-weight: 500; font-size: 15px; padding: 13px 20px;
+  }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); box-shadow:none; }
+  .meta {
+    margin-top: 18px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    font-size: 13.5px; color: var(--muted);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--surface); border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 13px; border-radius: 999px; color: var(--text); font-weight: 500;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+  /* ---- right column: phone ---- */
+  .visual { display: flex; justify-content: center; align-items: center; }
+  .phone {
+    position: relative;
+    width: clamp(220px, 24vw, 300px);
+    aspect-ratio: 9 / 19;
+    background: #05070a;
+    border-radius: 38px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 6px rgba(53,208,208,0.06);
+  }
+  .phone::before {
+    content: ""; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    width: 92px; height: 6px; border-radius: 999px; background: #1c2226; z-index: 2;
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 30px; overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(53,208,208,0.22), transparent 55%),
+      var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .screen .fallback { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .screen .fallback img { width: 96px; height: 96px; border-radius: 22px; }
+  .screen .fallback span { color: var(--muted); font-size: 13px; }
+  /* ---- update toast ---- */
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-300%);
+    background: var(--surface); border: 1px solid var(--teal);
+    color: var(--text); padding: 12px 18px; border-radius: 12px;
+    display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5); z-index: 20; transition: transform .35s ease;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast a { color: var(--teal); font-weight: 700; text-decoration: none; }
+  .foot {
+    position: fixed; bottom: 14px; left: 0; right: 0; text-align: center;
+    color: var(--muted); font-size: 12px;
+  }
+  @media (max-width: 820px) {
+    .wrap { grid-template-columns: 1fr; text-align: center; justify-items: center; gap: 20px; }
+    .visual { display: none; }
+    .sub { margin-left: auto; margin-right: auto; }
+    .cta, .meta { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+  <div id="toast" class="toast">
+    <span>Nueva versión disponible</span>
+    <a id="toastLink" href="#">Descargar</a>
+  </div>
+
+  <main class="wrap">
+    <section>
+      <img class="logo" src="./assets/miru-wordmark.png" alt="Miru" />
+      <h1 class="tagline">Anime y manga,<br><b>en una sola app.</b></h1>
+      <p class="sub">Tu biblioteca, tus fuentes, tu ritmo. Mira anime con subtítulos avanzados y
+        lee manga con un lector totalmente configurable. Todo en Android.</p>
+
+      <div class="cta">
+        <a class="btn" id="downloadBtn" href="#" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M4 19h16"/></svg>
+          Descargar APK
+        </a>
+        <button class="btn btn-ghost" id="notifyBtn">Avisarme de actualizaciones</button>
+      </div>
+
+      <div class="meta">
+        <span class="pill"><span class="dot"></span>Versión <b id="verName">—</b></span>
+        <span id="verDate"></span>
+        <span>· Android 8.0+</span>
+      </div>
+    </section>
+
+    <section class="visual">
+      <div class="phone">
+        <div class="screen">
+          <img id="heroShot" src="./assets/hero.png" alt="Miru en Android" />
+          <div class="fallback" id="heroFallback" style="display:none">
+            <img src="./assets/miru-icon.png" alt="Miru" />
+            <span>Coloca aquí una captura<br>en assets/hero.png</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="foot">Miru es solo una interfaz. No aloja ni distribuye contenido.</div>
+
+<script>
+  const VERSION_URL = './version.json';
+  const heroImg = document.getElementById('heroShot');
+  heroImg.addEventListener('error', () => {
+    heroImg.style.display = 'none';
+    document.getElementById('heroFallback').style.display = 'flex';
+  });
+
+  async function init() {
+    let data;
+    try {
+      const res = await fetch(VERSION_URL, { cache: 'no-store' });
+      data = await res.json();
+    } catch (e) { return; }
+
+    document.getElementById('verName').textContent = data.versionName || '—';
+    if (data.date) document.getElementById('verDate').textContent = '· ' + data.date;
+    const dl = document.getElementById('downloadBtn');
+    dl.href = data.apkUrl || '#';
+    document.getElementById('toastLink').href = data.apkUrl || '#';
+
+    // New-version detection for returning visitors
+    const seen = localStorage.getItem('miru_seen_version');
+    if (seen && seen !== String(data.versionCode)) {
+      showToast();
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try { new Notification('Miru ' + data.versionName + ' disponible', {
+          body: data.changelog || 'Hay una nueva versión para descargar.',
+          icon: './assets/miru-icon.png'
+        }); } catch (e) {}
+      }
+    }
+    localStorage.setItem('miru_seen_version', String(data.versionCode));
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 8000);
+  }
+
+  document.getElementById('notifyBtn').addEventListener('click', async () => {
+    if (!('Notification' in window)) { alert('Tu navegador no soporta notificaciones.'); return; }
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      new Notification('Avisos activados', { body: 'Te avisaremos cuando haya una nueva versión de Miru.', icon: './assets/miru-icon.png' });
+    }
+  });
+
+  init();
+</script>
+</body>
+</html>
