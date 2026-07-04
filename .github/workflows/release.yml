@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages (build-tools + NDK)
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.1" "ndk;27.1.12297006"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build universal debug APK
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-universal-debug.apk Miru-universal.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Miru ${{ github.ref_name }}
+          files: Miru-universal.apk
+          generate_release_notes: true
+
+      - name: Update landing version.json on main
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          CODE=$(grep -oP 'versionCode\s*=\s*\K[0-9]+' app/build.gradle.kts | head -1)
+          DATE=$(date +%Y-%m-%d)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          {
+            printf '{\n'
+            printf '  "versionName": "%s",\n' "$VERSION"
+            printf '  "versionCode": %s,\n' "$CODE"
+            printf '  "date": "%s",\n' "$DATE"
+            printf '  "apkUrl": "https://github.com/%s/releases/latest/download/Miru-universal.apk",\n' "$GITHUB_REPOSITORY"
+            printf '  "changelog": "Version %s de Miru."\n' "$VERSION"
+            printf '}\n'
+          } > landing/version.json
+          git add landing/version.json
+          git commit -m "chore: update landing version.json to ${VERSION}" || echo "no changes"
+          git push origin main
