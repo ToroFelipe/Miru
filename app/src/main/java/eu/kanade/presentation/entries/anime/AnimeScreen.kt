@@ -515,7 +515,7 @@ private fun AnimeScreenSmallImpl(
                                 Button(
                                     onClick = onContinueWatching,
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(0xFFE50914), // Miru Red
+                                        containerColor = Color(0xFF35D0D0), // Miru teal
                                         contentColor = Color.White
                                     ),
                                     shape = RoundedCornerShape(4.dp),

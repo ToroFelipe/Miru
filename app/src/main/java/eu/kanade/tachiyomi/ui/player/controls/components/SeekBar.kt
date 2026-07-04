@@ -108,8 +108,8 @@ fun SeekbarWithTimers(
                 },
             modifier = Modifier.weight(1f),
             colors = SeekerDefaults.seekerColors(
-                progressColor = Color(0xFFE50914), // Miru Red
-                thumbColor = Color(0xFFE50914),    // Miru Red
+                progressColor = Color(0xFF35D0D0), // Miru teal
+                thumbColor = Color(0xFF35D0D0),    // Miru teal
                 trackColor = Color.White.copy(alpha = 0.24f),
                 readAheadColor = Color.White.copy(alpha = 0.45f),
             ),

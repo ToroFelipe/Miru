@@ -181,7 +181,7 @@ fun AnimeActionRow(
     modifier: Modifier = Modifier,
 ) {
     val defaultActionButtonColor = Color.White.copy(alpha = 0.7f)
-    val activeActionButtonColor = Color(0xFFE50914) // Miru Red
+    val activeActionButtonColor = Color(0xFF35D0D0) // Miru teal
 
     // TODO: show something better when using custom interval
     val nextUpdateDays = remember(nextUpdate) {

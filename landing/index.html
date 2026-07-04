@@ -141,11 +141,20 @@
     position: fixed; bottom: 14px; left: 0; right: 0; text-align: center;
     color: var(--muted); font-size: 12px;
   }
+  /* ---- QR (desktop only) ---- */
+  .qr { display: flex; align-items: center; gap: 14px; margin-top: 22px; }
+  .qr-box { background: #fff; padding: 8px; border-radius: 12px; width: 96px; height: 96px; line-height: 0; }
+  .qr-box img, .qr-box canvas { width: 80px !important; height: 80px !important; display: block; }
+  .qr-label { color: var(--muted); font-size: 13px; line-height: 1.45; font-weight: 500; }
   @media (max-width: 820px) {
     .wrap { grid-template-columns: 1fr; text-align: center; justify-items: center; gap: 20px; }
     .visual { display: none; }
     .sub { margin-left: auto; margin-right: auto; }
     .cta, .meta { justify-content: center; }
+    .qr { display: none; }
+  }
+  @media (max-height: 720px) {
+    .qr { display: none; }
   }
 </style>
 </head>
@@ -175,6 +184,11 @@
         <span id="verDate"></span>
         <span>· Android 8.0+</span>
       </div>
+
+      <div class="qr" id="qrWrap">
+        <div class="qr-box" id="qrcode"></div>
+        <div class="qr-label">Escanea para<br>instalar en tu móvil</div>
+      </div>
     </section>
 
     <section class="visual">
@@ -192,6 +206,7 @@
 
   <div class="foot">Miru es solo una interfaz. No aloja ni distribuye contenido.</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const VERSION_URL = './version.json';
   const heroImg = document.getElementById('heroShot');
@@ -212,6 +227,20 @@
     const dl = document.getElementById('downloadBtn');
     dl.href = data.apkUrl || '#';
     document.getElementById('toastLink').href = data.apkUrl || '#';
+
+    // QR code (desktop) pointing to the APK download
+    if (data.apkUrl && window.QRCode) {
+      try {
+        new QRCode(document.getElementById('qrcode'), {
+          text: data.apkUrl,
+          width: 80,
+          height: 80,
+          colorDark: '#0E1113',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M,
+        });
+      } catch (e) {}
+    }
 
     // New-version detection for returning visitors
     const seen = localStorage.getItem('miru_seen_version');
