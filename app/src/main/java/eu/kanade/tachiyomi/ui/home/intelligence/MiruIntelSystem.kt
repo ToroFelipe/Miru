@@ -207,6 +207,58 @@ object MiruIntelSystem {
         }
     }
 
+    /**
+     * Public: fetch the weekly airing schedule for a given day.
+     * [day] must be a Jikan filter value: monday, tuesday, ... sunday.
+     */
+    suspend fun fetchScheduleForDay(day: String): List<MiruMediaItem> = withContext(Dispatchers.IO) {
+        val cacheKey = "schedule_$day"
+        if (::db.isInitialized) {
+            val cached = db.getCache(cacheKey, CACHE_EXPIRY)
+            if (cached != null) {
+                return@withContext parseScheduleJson(cached)
+            }
+        }
+
+        delay(API_DELAY)
+        try {
+            logcat(LogPriority.INFO) { "Fetching schedule for $day from Jikan..." }
+            val response = networkHelper.client
+                .newCall(GET("https://api.jikan.moe/v4/schedules?filter=$day&sfw=true&limit=25"))
+                .awaitSuccess()
+            val body = response.body.string()
+            if (::db.isInitialized) db.saveCache(cacheKey, body)
+            parseScheduleJson(body)
+        } catch (e: Exception) {
+            logcat(LogPriority.ERROR, e) { "Failed to fetch schedule for $day from Jikan" }
+            emptyList()
+        }
+    }
+
+    private fun parseScheduleJson(jsonStr: String): List<MiruMediaItem> {
+        return try {
+            val parsed = json.decodeFromString<JikanResponse<List<JikanScheduleMedia>>>(jsonStr)
+            parsed.data
+                .distinctBy { it.malId }
+                .map { media ->
+                    MiruMediaItem(
+                        id = media.malId,
+                        title = media.title,
+                        thumbnailUrl = media.images?.jpg?.largeImageUrl ?: media.images?.jpg?.imageUrl,
+                        description = media.synopsis ?: "",
+                        genres = media.genres.map { it.name },
+                        rating = String.format("%.1f", media.score ?: 8.8),
+                        isAnime = true,
+                        isRecommendation = true,
+                        airingTime = media.broadcast?.time?.takeIf { it.isNotBlank() },
+                    )
+                }
+        } catch (e: Exception) {
+            logcat(LogPriority.ERROR, e) { "Error parsing Jikan schedule JSON" }
+            emptyList()
+        }
+    }
+
     private suspend fun fetchTopMangaCached(): List<MiruMediaItem> {
         val cached = db.getCache("top_manga", CACHE_EXPIRY)
         if (cached != null) {
@@ -684,6 +736,24 @@ private data class JikanImageUrls(
 private data class JikanGenre(
     @SerialName("mal_id") val malId: Long,
     val name: String
+)
+
+@Serializable
+private data class JikanScheduleMedia(
+    @SerialName("mal_id") val malId: Long,
+    val title: String,
+    val synopsis: String? = null,
+    val score: Double? = null,
+    val images: JikanImages? = null,
+    val genres: List<JikanGenre> = emptyList(),
+    val broadcast: JikanBroadcast? = null,
+)
+
+@Serializable
+private data class JikanBroadcast(
+    val day: String? = null,
+    val time: String? = null,
+    val timezone: String? = null,
 )
 
 @Serializable

@@ -30,6 +30,8 @@ import eu.kanade.tachiyomi.ui.browse.anime.source.globalsearch.GlobalAnimeSearch
 import eu.kanade.tachiyomi.ui.browse.manga.source.globalsearch.GlobalMangaSearchScreen
 import eu.kanade.tachiyomi.ui.entries.anime.AnimeScreen
 import eu.kanade.tachiyomi.ui.entries.manga.MangaScreen
+import eu.kanade.tachiyomi.ui.home.calendar.MiruCalendarScreen
+import eu.kanade.tachiyomi.ui.home.search.MiruUnifiedSearchScreen
 import kotlinx.coroutines.launch
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.i18n.MR
@@ -134,7 +136,10 @@ data object MiruHomeTab : Tab {
                     }
                 },
                 onSearchClick = {
-                    navigator.push(GlobalAnimeSearchScreen(""))
+                    navigator.push(MiruUnifiedSearchScreen(""))
+                },
+                onCalendarClick = {
+                    navigator.push(MiruCalendarScreen)
                 },
             )
         }

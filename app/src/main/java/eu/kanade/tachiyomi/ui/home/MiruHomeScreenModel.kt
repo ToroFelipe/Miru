@@ -690,6 +690,8 @@ data class MiruMediaItem(
     val unseenCount: Int = 0,
     val isRecommendation: Boolean = false,
     val isStarted: Boolean = false,
+    /** Broadcast time label for the release calendar (e.g. "23:30"), null when unknown. */
+    val airingTime: String? = null,
 )
 
 private data class HomePreferenceState(

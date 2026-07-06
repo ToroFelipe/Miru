@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -75,6 +76,7 @@ fun HomeScreenContent(
     onContinueClick: (ContinueWatchingItem) -> Unit,
     onRefresh: () -> Unit,
     onSearchClick: () -> Unit,
+    onCalendarClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (state.isLoading) {
@@ -151,7 +153,7 @@ fun HomeScreenContent(
             ) {
                 // Header: Miru logo + search
                 item {
-                    MiruHomeHeader(onSearchClick = onSearchClick)
+                    MiruHomeHeader(onSearchClick = onSearchClick, onCalendarClick = onCalendarClick)
                 }
 
                 // Hero Banner Section (Slider)
@@ -441,6 +443,7 @@ fun MediaSection(
 @Composable
 private fun MiruHomeHeader(
     onSearchClick: () -> Unit,
+    onCalendarClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -456,6 +459,22 @@ private fun MiruHomeHeader(
             modifier = Modifier.height(26.dp),
         )
         Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color.White.copy(alpha = 0.08f))
+                .clickable(onClick = onCalendarClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.DateRange,
+                contentDescription = stringResource(MR.strings.miru_calendar_open),
+                tint = Color.White,
+                modifier = Modifier.size(22.dp),
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
         Box(
             modifier = Modifier
                 .size(40.dp)
