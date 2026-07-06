@@ -52,14 +52,25 @@ jobs:
       - name: Build signed release APK
         run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
 
-      - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-universal-release.apk Miru-universal.apk
+      - name: Rename APKs
+        run: |
+          OUT=app/build/outputs/apk/release
+          cp "$OUT/app-universal-release.apk"    Miru-universal.apk
+          cp "$OUT/app-arm64-v8a-release.apk"    Miru-arm64-v8a.apk
+          cp "$OUT/app-armeabi-v7a-release.apk"  Miru-armeabi-v7a.apk
+          cp "$OUT/app-x86_64-release.apk"       Miru-x86_64.apk
+          cp "$OUT/app-x86-release.apk"          Miru-x86.apk
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Miru ${{ github.ref_name }}
-          files: Miru-universal.apk
+          files: |
+            Miru-arm64-v8a.apk
+            Miru-armeabi-v7a.apk
+            Miru-x86_64.apk
+            Miru-x86.apk
+            Miru-universal.apk
           generate_release_notes: true
 
       - name: Update landing version.json on main
