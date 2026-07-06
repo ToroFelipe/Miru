@@ -50,7 +50,7 @@ jobs:
           } > keystore.properties
 
       - name: Build signed release APK
-        run: ./gradlew :app:assembleRelease -Pdisable-code-shrink --no-daemon --stacktrace
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
 
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-universal-release.apk Miru-universal.apk
