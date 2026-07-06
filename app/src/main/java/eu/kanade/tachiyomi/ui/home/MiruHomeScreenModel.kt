@@ -73,9 +73,13 @@ class MiruHomeScreenModel(
         MiruIntelSystem.recommendedAnime,
         MiruIntelSystem.recommendedManga,
         MiruIntelSystem.genreRecommendations,
-        MiruIntelSystem.similarToLastWatched
-    ) { heroList, recAnime, recManga, genreRecs, similar ->
-        JikanData(heroList, recAnime, recManga, genreRecs, similar)
+        combine(
+            MiruIntelSystem.similarToLastWatched,
+            MiruIntelSystem.currentSeasonAnime,
+            ::Pair,
+        ),
+    ) { heroList, recAnime, recManga, genreRecs, similarAndSeason ->
+        JikanData(heroList, recAnime, recManga, genreRecs, similarAndSeason.first, similarAndSeason.second)
     }
 
     private val categoriesAndJikanFlow = combine(
@@ -344,6 +348,10 @@ class MiruHomeScreenModel(
 
         // 2. Intelligent/Recommendation rows
         if (showRecommendations) {
+            if (showAnime && jikanData.currentSeasonAnime.isNotEmpty()) {
+                allCategories.add(MiruCategoryRow(context.stringResource(MR.strings.miru_home_current_season), jikanData.currentSeasonAnime))
+            }
+
             if (showAnime && jikanData.recommendedAnime.isNotEmpty()) {
                 allCategories.add(MiruCategoryRow(context.stringResource(MR.strings.miru_home_recommended_for_you), jikanData.recommendedAnime))
             }
@@ -697,6 +705,7 @@ data class JikanData(
     val recommendedManga: List<MiruMediaItem>,
     val genreRecommendations: Map<String, List<MiruMediaItem>>,
     val similarToLastWatched: List<MiruMediaItem>,
+    val currentSeasonAnime: List<MiruMediaItem> = emptyList(),
 )
 
 private fun String?.toHomeCategoryName(defaultName: String): String {

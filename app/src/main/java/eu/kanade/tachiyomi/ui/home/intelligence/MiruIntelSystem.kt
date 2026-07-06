@@ -87,6 +87,7 @@ object MiruIntelSystem {
     val genreRecommendations = MutableStateFlow<Map<String, List<MiruMediaItem>>>(emptyMap())
     val similarToLastWatched = MutableStateFlow<List<MiruMediaItem>>(emptyList())
     val heroBannerAnimeList = MutableStateFlow<List<MiruMediaItem>>(emptyList())
+    val currentSeasonAnime = MutableStateFlow<List<MiruMediaItem>>(emptyList())
 
     fun initialize(context: Context) {
         db = MiruIntelDatabase(context)
@@ -126,6 +127,12 @@ object MiruIntelSystem {
                     }
                     // Choose top 5 trending items for Hero Banner slider
                     heroBannerAnimeList.value = bannerItems
+                }
+
+                // 1b. Fetch current season anime ("Temporada actual")
+                val seasonAnime = fetchCurrentSeasonCached()
+                if (seasonAnime.isNotEmpty()) {
+                    currentSeasonAnime.value = seasonAnime
                 }
 
                 // 2. Fetch Top Manga
@@ -175,6 +182,27 @@ object MiruIntelSystem {
             parseMediaListJson(body, isAnime = true)
         } catch (e: Exception) {
             logcat(LogPriority.ERROR, e) { "Failed to fetch top anime from Jikan" }
+            emptyList()
+        }
+    }
+
+    private suspend fun fetchCurrentSeasonCached(): List<MiruMediaItem> {
+        val cached = db.getCache("current_season_anime", CACHE_EXPIRY)
+        if (cached != null) {
+            return parseMediaListJson(cached, isAnime = true)
+        }
+
+        delay(API_DELAY)
+        return try {
+            logcat(LogPriority.INFO) { "Fetching current season anime from Jikan..." }
+            val response = networkHelper.client
+                .newCall(GET("https://api.jikan.moe/v4/seasons/now?limit=20&sfw=true"))
+                .awaitSuccess()
+            val body = response.body.string()
+            db.saveCache("current_season_anime", body)
+            parseMediaListJson(body, isAnime = true)
+        } catch (e: Exception) {
+            logcat(LogPriority.ERROR, e) { "Failed to fetch current season anime from Jikan" }
             emptyList()
         }
     }

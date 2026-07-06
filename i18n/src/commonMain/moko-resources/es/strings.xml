@@ -872,6 +872,7 @@
     <string name="miru_home_because_you_like">Porque te gusta %s</string>
     <string name="miru_home_similar_to_watched">Similar a lo que viste</string>
     <string name="miru_home_popular_this_week">Populares esta semana</string>
+    <string name="miru_home_current_season">Temporada actual</string>
     <string name="miru_home_popular_manga">Manga populares</string>
     <string name="miru_home_episode_number">Ep %d</string>
     <string name="miru_home_minutes_remaining">%d min</string>
